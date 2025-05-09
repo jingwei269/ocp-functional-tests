@@ -5,6 +5,19 @@ PROJECT="test"
 APP_NAME="httpd-24-rhel7"
 ROUTE_HOST=""
 
+
+# 引入日志工具
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+UTILS_PATH="$SCRIPT_DIR/../common/utils.sh"
+
+if [[ -f "$UTILS_PATH" ]]; then
+  source "$UTILS_PATH"
+else
+  echo "[ERROR] Cannot find utils.sh at $UTILS_PATH"
+  exit 1
+fi
+
+
 # 等待 Route 准备好
 echo "[INFO] Waiting for route to be created..."
 for i in {1..10}; do
@@ -24,8 +37,8 @@ fi
 
 echo "[INFO] Verifying route with curl..."
 if curl -s "https://$ROUTE_HOST" -k | grep -iq "apache"; then
-  echo "[PASS] Application is deployed and accessible via route."
+  log_pass "Application is deployed and accessible via route."
 else
-  echo "[FAIL] Application route did not return expected content."
+  log_error "Application route did not return expected content."
   exit 1
 fi

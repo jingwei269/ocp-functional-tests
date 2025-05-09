@@ -1,6 +1,20 @@
 #!/bin/bash
 set -euo pipefail
 
+
+# 引入日志工具
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+UTILS_PATH="$SCRIPT_DIR/../common/utils.sh"
+
+if [[ -f "$UTILS_PATH" ]]; then
+  source "$UTILS_PATH"
+else
+  echo "[ERROR] Cannot find utils.sh at $UTILS_PATH"
+  exit 1
+fi
+
+
+
 PROJECT="affinity-test"
 echo "[INFO] Verifying pods distribution for project: $PROJECT"
 
@@ -23,9 +37,9 @@ zones=$(oc get pods -n "$PROJECT" -l app=httpd -o jsonpath='{range .items[*]}{.s
 zone_count=$(printf "%s\n" "$zones" | wc -l)
 
 if (( zone_count >= 2 )); then
-  echo "[PASS] Pods are distributed across at least two zones"
+  log_pass "Pods are distributed across at least two zones"
 else
-  echo "[FAIL] Pods are not distributed across multiple zones"
+  log_error "Pods are not distributed across multiple zones"
   exit 1
 fi
 

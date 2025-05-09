@@ -1,6 +1,18 @@
 #!/bin/bash
 set -e
 
+# 引入日志工具
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+UTILS_PATH="$SCRIPT_DIR/../common/utils.sh"
+
+if [[ -f "$UTILS_PATH" ]]; then
+  source "$UTILS_PATH"
+else
+  echo "[ERROR] Cannot find utils.sh at $UTILS_PATH"
+  exit 1
+fi
+
+
 echo "[INFO] Verifying intra-project communication success..."
 oc project network-policy-2
 
@@ -10,11 +22,11 @@ echo "[INFO] Accessing same-project service..."
 oc rsh "$POD" curl --max-time 5 http://network-policy-test.network-policy-2.svc.cluster.local:8080 | head -10
 
 echo "[INFO] Accessing cross-project service, should fail..."
-if oc rsh "$POD" curl --max-time 5 http://httpd.network-policy-1.svc.cluster.local:8080; then
-  echo "[FAIL] Cross-project traffic unexpectedly succeeded"
+if oc rsh "$POD" curl --max-time 5 http://httpd.network-policy-1.svc.cluster.local:8080 |head -n 10; then
+  log_error "Cross-project traffic unexpectedly succeeded"
   exit 1
 else
-  echo "[PASS] Cross-project traffic correctly denied"
+  log_pass "Cross-project traffic correctly denied"
 fi
 
 echo "[INFO] Creating NetworkPolicy to allow traffic from network-policy-2"
@@ -43,9 +55,9 @@ oc label namespace network-policy-2 name=network-policy-2 --overwrite
 
 echo "[INFO] Accessing cross-project service again, should succeed now..."
 if oc rsh "$POD" curl --max-time 5 http://httpd.network-policy-1.svc.cluster.local:8080 |head -n 10; then
-  echo "[PASS] Cross-project traffic succeeded after applying NetworkPolicy"
+  log_pass "Cross-project traffic succeeded after applying NetworkPolicy"
 else
-  echo "[FAIL] Cross-project traffic still denied"
+  log_error "Cross-project traffic still denied"
   exit 1
 fi
 
