@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-oc new-project network-policy-1 || true >/dev/null
-oc new-project network-policy-2 || true >/dev/null
+oc new-project network-policy-1   >/dev/null
+oc new-project network-policy-2   >/dev/null
 
 # 部署 httpd 到 network-policy-1
 oc create -n network-policy-1 -f - <<EOF
