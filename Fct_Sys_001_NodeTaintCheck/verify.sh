@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-NODES=("aacadiinfra1" "aacadiinfra2" "aacadiinfra3")
+NODES=$(oc get nodes |grep infra |awk '{ print $1}')
 EXPECTED='[
   {
     "effect": "NoExecute",
