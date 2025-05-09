@@ -3,6 +3,7 @@ set -euo pipefail
 
 PROJECT="template-test"
 
+echo "[INFO] Creating project: $PROJECT"
 # 创建测试项目（如果已存在则跳过）
 if ! oc get project "$PROJECT" >/dev/null 2>&1; then
   oc new-project "$PROJECT" >/dev/null

@@ -2,7 +2,8 @@
 Usage: ./run_all.sh <deploy|verify|clean>
 
 ## deploy
- ```./run_all.sh deploy
+ ```
+ ./run_all.sh deploy
 [INFO] ========== Starting [deploy] tests at 20250509_225338 ==========
 [INFO] ========== Running [deploy] for Test: Fct_Sys_001_NodeTaintCheck ==========
 [WARN] [SKIP] No executable /home/jim/jim/test/ocp-functional-tests/Fct_Sys_001_NodeTaintCheck/deploy.sh found
